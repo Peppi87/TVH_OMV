@@ -1,0 +1,7 @@
+# Autoshutdown plugin-file for TVHeadend
+
+# In which folder is the file to look for
+folder="/var/run/"
+
+# filename (can be expanded with regexes)
+file="tvh_subscriptions"
