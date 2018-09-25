@@ -13,6 +13,8 @@ no_sleep_pre_boot="7200"
 no_sleep_file="/var/run/tvh_subscriptions"
 #OMV UID to create new Jobs
 omv_new_job_uidv4="fa4b1c66-ef79-11e5-87a0-0002b3a176b4"
+#Load OMV WakeUp Jobs
+omv_wake_jobs=$(omv-confdbadm read conf.system.wakealarm.job | jq -r '.[]|.comment')
 
 time_now=$(date +'%s')
 no_sleep=0
@@ -41,7 +43,7 @@ check_dvr_entries() {
 							no_sleep=1
 						fi
 
-					if grep $uuid  /etc/openmediavault/config.xml >/dev/null ; then
+					if echo $omv_wake_jobs | grep -q $uuid; then
 						echo "WakeUp bereits geplant fuer $disp_name"
 					else
 						omv-rpc -u admin "Wakealarm" "setJob" "{\"uuid\":\"$omv_new_job_uidv4\",\"enable\":true,\"minute\":\""$bootMinute"\",\"everynminute\":false,\"hour\":\""$bootHour"\",\"everynhour\":false,\"dayofmonth\":\""$bootDay"\",\"everyndayofmonth\":false,\"month\":\""$bootMonth"\",\"dayofweek\":\"*\",\"comment\":\"$disp_name || $uuid\"}" >/dev/null
